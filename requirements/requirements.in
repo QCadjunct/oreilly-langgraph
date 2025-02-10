@@ -6,6 +6,7 @@ serpapi
 python-dotenv
 tavily-python
 langchain-nomic
+langgraph-cli[inmem]
 langchain_community
 tiktoken
 langchainhub

@@ -53,6 +53,7 @@ chromadb==0.5.18
     # via -r ./requirements/requirements.in
 click==8.1.7
     # via
+    #   langgraph-cli
     #   nomic
     #   typer
     #   uvicorn
@@ -205,6 +206,8 @@ langgraph==0.2.45
     # via -r ./requirements/requirements.in
 langgraph-checkpoint==2.0.2
     # via langgraph
+langgraph-cli==0.1.54
+    # via -r ./requirements/requirements.in
 langgraph-sdk==0.1.35
     # via langgraph
 langsmith==0.1.140
