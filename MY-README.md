@@ -3,12 +3,14 @@
 ## Modern Setup with UV (Recommended)
 
 This project uses **UV** for fast, reliable Python package management. UV is a modern replacement for pip/conda that provides:
+
 - ⚡ Extremely fast dependency resolution and installation
 - 🔒 Reliable dependency locking with `uv.lock`
 - 🐍 Automatic Python version management
 - 📦 Modern packaging with `pyproject.toml`
 
 ### Prerequisites
+
 - Install [UV](https://docs.astral.sh/uv/getting-started/installation/)
 - Python 3.13+ (UV will manage this automatically)
 
@@ -20,9 +22,11 @@ This project uses **UV** for fast, reliable Python package management. UV is a m
    ```
 
 2. **Install Dependencies (UV handles everything):**
+
    ```bash
    uv sync
    ```
+
    This will:
    - Create a virtual environment in `.venv/`
    - Install Python 3.13 if needed
@@ -33,16 +37,19 @@ This project uses **UV** for fast, reliable Python package management. UV is a m
    - **macOS/Linux:** `source .venv/bin/activate`
 
 4. **Run the Project:**
+
    ```bash
    uv run oreilly-langgraph
    ```
 
 5. **Start Jupyter Notebooks:**
+
    ```bash
    uv run jupyter notebook
    ```
 
 ### Development Tools Included
+
 - **Ruff** - Fast linting and formatting
 - **Black** - Code formatting
 - **Pytest** - Testing framework
@@ -50,6 +57,7 @@ This project uses **UV** for fast, reliable Python package management. UV is a m
 - **Jupyter** - Interactive notebooks
 
 ### Useful UV Commands
+
 ```bash
 # Add new dependencies
 uv add package-name
@@ -70,18 +78,19 @@ uv sync --upgrade
 ## Environment Variables
 
 - Create a `.env` file in the project root
-- Add your API keys:
+
   ```env
   OPENAI_API_KEY=your_openai_api_key_here
   ANTHROPIC_API_KEY=your_anthropic_api_key_here
   ```
+
 - Get API keys from:
   - [OpenAI Platform](https://platform.openai.com/)
   - [Anthropic Console](https://console.anthropic.com/)
 
 ## Project Structure
 
-```
+```markdown
 oreilly-langgraph/
 ├── src/oreilly_langgraph/     # Main Python package
 ├── notebook/                   # Jupyter notebooks
@@ -116,6 +125,7 @@ Here are the main notebooks available in the `notebook/` folder:
 ## Dependencies
 
 ### Core Dependencies
+
 - **LangGraph** >= 0.4.10 - Graph-based LLM applications
 - **LangChain** >= 0.3.0 - LLM application framework
 - **OpenAI** >= 1.0.0 - OpenAI API client
@@ -125,6 +135,7 @@ Here are the main notebooks available in the `notebook/` folder:
 - **Quarto** >= 0.1.0 - Publishing system
 
 ### Development Dependencies
+
 - **Ruff** - Fast Python linter and formatter
 - **Black** - Python code formatter
 - **Pytest** - Testing framework
