@@ -23,8 +23,10 @@
 
 # In[2]:
 
-
-get_ipython().run_cell_magic('capture', '--no-stderr', '%pip install -U --quiet langchain-community tiktoken langchain-openai langchainhub chromadb langchain langgraph langchain-text-splitters\n')
+# Dependencies managed via uv and pyproject.toml
+# Run `uv sync` from project root to install all required packages:
+# langchain-community, tiktoken, langchain-openai, langchainhub,
+# chromadb, langchain, langgraph, langchain-text-splitters
 
 
 # In[3]:

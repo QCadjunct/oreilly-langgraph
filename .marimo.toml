@@ -1,0 +1,63 @@
+[ai]
+# Primary coding model - excellent for LangGraph/LangChain development (Ollama)
+open_ai = { 
+  api_key = "", 
+  base_url = "http://localhost:11434/v1", 
+  model = "qwen2.5-coder:14b" 
+}
+
+# Optional API Providers (uncomment and add your API keys):
+
+# OpenAI
+# open_ai = { api_key = "sk-your-openai-api-key-here", model = "gpt-4o" }
+
+# Anthropic Claude 4 Sonnet (recommended)
+# anthropic = { api_key = "sk-ant-your-anthropic-api-key-here", model = "claude-4-sonnet-20250514" }
+
+# Anthropic Claude 4 Opus (most powerful)
+# anthropic = { api_key = "sk-ant-your-anthropic-api-key-here", model = "claude-4-opus-20250514" }
+
+# Anthropic Claude 3.5 Sonnet
+# anthropic = { api_key = "sk-ant-your-anthropic-api-key-here", model = "claude-3-5-sonnet-20241022" }
+
+# Anthropic Claude 3.5 Haiku (fastest)
+# anthropic = { api_key = "sk-ant-your-anthropic-api-key-here", model = "claude-3-5-haiku-20241022" }
+
+# Google AI Gemini
+# google = { api_key = "your-google-ai-api-key-here", model = "gemini-1.5-pro" }
+
+# Mistral AI (Le Chat)
+# open_ai = { api_key = "your-mistral-api-key-here", base_url = "https://api.mistral.ai/v1", model = "mistral-large-latest" }
+
+# Custom rules for LangGraph development
+rules = [
+  "Always use proper type hints with langchain and langgraph imports",
+  "Include docstrings for graph nodes and edges",
+  "Use async/await patterns for LangChain operations when appropriate",
+  "Follow LangGraph best practices for state management",
+  "Import from specific langchain modules rather than general imports",
+  "Add error handling for LLM API calls",
+  "Use descriptive variable names for graph states and nodes",
+  "Use TypedDict for LangGraph state schemas",
+  "Implement proper error handling in graph nodes",
+  "Add logging for graph execution steps",
+  "Use langchain_core.messages for message handling",
+  "Follow the invoke/ainvoke pattern for async operations",
+  "Structure LangGraph workflows with clear node functions",
+  "Use proper imports: from langgraph.graph import StateGraph",
+  "Add type annotations for all function parameters and returns"
+]
+
+# Enable all AI features
+completion = { enabled = true }
+chat = { enabled = true }
+
+# Alternative models (uncomment to switch)
+# For faster responses during development:
+# open_ai = { api_key = "", base_url = "http://localhost:11434/v1", model = "qwen2.5-coder:7b" }
+
+# For complex reasoning tasks:
+# open_ai = { api_key = "", base_url = "http://localhost:11434/v1", model = "deepseek-r1:14b" }
+
+# For vision-related LangGraph workflows:
+# open_ai = { api_key = "", base_url = "http://localhost:11434/v1", model = "qwen2.5vl:7b" }
