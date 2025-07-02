@@ -5,14 +5,33 @@ app = marimo.App()
 
 
 @app.cell
-def _():
+def mmports_and_setup():
+    # Cell 1: Imports and Setup
     import marimo as mo
-    import quarto
-    __version__ = "0.1.0"
-    __generated_with = "0.14.7"
+    import quarto as qt
+    import os
+    import getpass
+    from typing_extensions import TypedDict
+    from typing import Literal
+    import random
+    from langgraph.graph import StateGraph, START, END
+    import base64
 
-    mo.md("✅ All imports installed successfully!")
-    return (mo,)
+    mo.md("# Imports and Setup")
+    return END, Literal, START, StateGraph, TypedDict, base64, getpass, mo, os
+
+
+@app.cell
+def _(getpass, mo, os):
+    # Cell 2: Environment Setup
+    def _set_env(var: str):
+        if not os.environ.get(var):
+            os.environ[var] = getpass.getpass(f"{var}: ")
+
+    _set_env("OPENAI_API_KEY")
+
+    mo.md("# Environment Setup get API Key")
+    return
 
 
 @app.cell
@@ -21,7 +40,7 @@ def _(mo):
         """
     # 🚀 Practical Introduction to LangGraph
 
-    This notebook provides a hands-on introduction to LangGraph fundamentals:
+    ## This notebook provides a hands-on introduction to LangGraph fundamentals:
     - **States**: Data structures that get updated during graph execution
     - **Nodes**: Functions that transform state data
     - **Edges**: Connections between nodes (direct or conditional)
@@ -45,592 +64,289 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
-    def load_required_packages():
-        try:
-            import langgraph
-            import openai
-            result = mo.md(
-                f"""
-                ✅ **All packages loaded successfully!**
-                - **LangGraph**: {langgraph}
-                - **OpenAI**: {openai.__version__}
-                """
-            )
-            return result, langgraph, openai
-        except ImportError as e:
-            return mo.md(
-                f"""
-                ❌ **Missing package**: {e}
-                Please run `uv sync` from the project root to install all dependencies.
-                """
-            )
-
-    # Different variable names to avoid conflicts
-    package_status, lg, oai = load_required_packages()
-    package_status
-    return
-
-
-@app.cell
-def _(display, mo):
-    import os
-    from dotenv import load_dotenv
-    import getpass
-
-    # Load environment variables from .env file
-    load_dotenv()
-
-    def setup_api_key(var_name: str, service_name: str = None):
-        """Setup API key from .env file or prompt user"""
-        service = service_name or var_name.replace("_API_KEY", "")
-        warning_md = None
-
-        if not os.environ.get(var_name):
-            # Use mo.md instead of print for warning
-            warning_md = mo.md(f"⚠️ **Warning:** {var_name} not found in .env file")
-
-            # Display the warning
-            display(warning_md)
-
-            api_key = getpass.getpass(f"Enter your {service} API key: ")
-            os.environ[var_name] = api_key
-            status = f"✅ {service} API key configured"
-        else:
-            status = f"✅ {service} API key loaded from .env file"
-
-        # Return a tuple with the Markdown output and any other useful objects
-        return mo.md(f"**API Key Status:** {status}"), os, getpass, load_dotenv
-    return (setup_api_key,)
-
-
-@app.cell
-def _(setup_api_key):
-    # Call the function with tuple unpacking
-    api_status, os_module, getpass_module, load_dotenv_func = setup_api_key("OPENAI_API_KEY", "OpenAI")
-
-    # Display the markdown output
-    api_status
+    mo.vstack([
+        mo.md("# States"),
+        mo.md(" "),
+        mo.md("## Data structure that get's updated when we execute a graph."),
+        mo.md(" "),
+        mo.md("# Nodes"),
+        mo.md(" "),
+        mo.md("## Functions where we perform updates to states by adding or transforming the keys of that state."),
+        mo.md(" "),
+        mo.md("# Edges"),
+        mo.md(" "),
+        mo.md("## Connect the nodes together (they can be direct a->b or conditional a->b or a->c)."),
+        mo.md(" "),
+        mo.md("# Graph (build & invoke)"),
+        mo.md("The [DAG cycle](https://en.wikipedia.org/wiki/Directed_acyclic_graph) that combines the entire thing.")
+    ])
     return
 
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-    ## 📊 Understanding States
-
-    **States** are typed data structures that get updated as we execute our graph.
-    Think of them as the "memory" of your workflow that carries information between nodes.
-
-    ## 🔧 Understanding Nodes
-
-    **Nodes** are functions that perform computations and update state data.
-    Each node receives the current state and returns an updated version.
-
-    ## 🔗 Understanding Edges
-
-    **Edges** connect nodes together in your workflow:
-    - **Direct edges**: Simple A → B connections
-    - **Conditional edges**: A → B or A → C based on logic
-
-    ## 🌐 Understanding Graphs
-
-    **Graphs** combine everything into a complete workflow.
-    They follow a [Directed Acyclic Graph (DAG)](https://en.wikipedia.org/wiki/Directed_acyclic_graph) pattern.
-
-    ## 🎯 Building Your First Graph
-
-    Let's create a simple graph with one node that processes state data.
-    """
-    )
+    # Cell 5: Setup Instructions
+    mo.vstack([
+        mo.md("## 📦 Setup & Dependencies"),
+        mo.md("This notebook requires a properly set up environment with uv. Before running:"),
+        mo.md("1. **Install uv**: Follow instructions at [docs.astral.sh/uv](https://docs.astral.sh/uv/)"),
+        mo.md("2. **Sync dependencies**: Run `uv sync` from the project root"),
+        mo.md("3. **Use correct kernel**: Ensure your Jupyter kernel uses the uv environment"),
+        mo.md("All required packages are managed via the project's `pyproject.toml`.")
+    ])
     return
 
 
 @app.cell
 def _(mo):
-    from typing_extensions import TypedDict
+    # Cell 6: Simple State Section Header
+    mo.vstack([
+        mo.md("# State"),
+        mo.md("State as a simple data structure that we update as we execute the graph.")
+    ])
 
-    def define_state_schema():
-        """Define the state schema for the graph"""
-        class State(TypedDict):    
-            state_before_node1: str
-            state_after_node1: str
-    
-        is_ready = True
-    
-        return State, TypedDict, mo.md(
-            """
-            📋 **State schema defined:** \n
-            - `state_before_node1`: Input data\n 
-            - `state_after_node1`: Output data
-        
-            ✅ **Ready for execution!**
-            """
-        ), is_ready
-
-    # Define the state
-    State, TypedDict, state_description, is_ready = define_state_schema()
-
-    # Display state description
-    state_description
-    return State, TypedDict
-
-
-@app.cell
-def _(mo):
-    mo.md(
-        """
-    ### 🔨 Creating a Processing Node
-
-    Now we'll define a node function that processes our state data.
-    """
-    )
     return
 
 
 @app.cell
-def _(display, mo):
-    def create_node(node_number: int):
-        """
-        Create a node processing function with a specific node number
-    
-        Args:
-        - node_number: The number of the node to process
-    
-        Returns:
-        - A function that processes the state for the given node
-        """
-        def node_func(state):
-            """Process state data in node number"""
-        
-            # Get the correct input state key
-            input_key = f"state_before_node{node_number}"
-            output_key = f"state_after_node{node_number}"
-        
-            # Process the state
-            state[output_key] = f"✅ Successfully processed by node{node_number}"
-        
-            # Create the display output
-            display_output = mo.vstack([
-                mo.md(f"🔄 Processing in node {node_number}..."),
-                mo.md(f"   Input: {state[input_key]}"),
-                mo.md(f"   Output: {state[output_key]}")
-            ])
-        
-            display(display_output)
-        
-            return state
-    
-        return node_func
-    return (create_node,)
-
-
-@app.cell
-def _(State, create_node, mo):
-    from typing import NamedTuple
-    from langgraph.graph import StateGraph, START, END
-
-    class GraphInfo(NamedTuple):
-        graph: object
-        description: object
-
-    def create_and_describe_graph():
-        """
-        Create and compile the LangGraph
-    
-        Returns:
-        - Compiled graph
-        - Markdown description of graph structure
-        """
-        # Create node functions for each node
-        node1 = create_node(1)
-
-        # Create the graph builder
-        builder = StateGraph(State)
-
-        # Add our processing node
-        builder.add_node("node1", node1)
-
-        # Connect START → node1 → END
-        builder.add_edge(START, "node1")
-        builder.add_edge("node1", END)
-
-        # Compile the graph
-        graph = builder.compile()
-
-        # Create markdown description
-        graph_description = mo.md("""
-        🎯 **Graph compiled successfully!**
-    
-        Structure: 
-        ```
-        START → node1 → END
-        ```
-        """)
-
-        # Return both the graph and its description
-        return GraphInfo(graph=graph, description=graph_description)
-
-    # Call the function and unpack the results
-    graph_info = create_and_describe_graph()
-
-    # Display the graph description
-    graph_info.description
-
-    return END, START, StateGraph
-
-
-@app.cell
-def _(mo):
-    mo.md(
-        r"""
-    "******* remove ********"
-
-    from typing import Literal
-    import random
+def _(TypedDict):
+    # Cell 7: Define Simple State and Node
+    class State(TypedDict):    
+        state_before_node1: str
+        state_after_node1: str
 
     def node1(state):
-        \"""Process state data in node 1\"""
-        print("🔄 Processing in node 1...")
-        state["state_after_node1"] = "✅ Successfully processed by node1"
-        print(f"   Input: {state['state_before_node1']}")
-        print(f"   Output: {state['state_after_node1']}")
+        print("Passing by node 1")
+        state["state_after_node1"] = "Passed by node1"
         return state
-    """
-    )
-    return
+
+    return State, node1
 
 
 @app.cell
-def _(mo):
-    mo.md(
-        """
-    ### 🏗️ Building the Graph
-
-    Now we'll assemble everything into a complete graph with proper edges.
-    """
-    )
-    return
-
-
-@app.cell
-def _(State, mo, node):
-    from langgraph.graph import StateGraph, START, END
-
-    # Create the graph builder
+def _(END, START, State, StateGraph, node1):
+    # Cell 8: Build Simple Graph
     builder = StateGraph(State)
-
-    # Add our processing node
-    builder.add_node("node1", node)
-
-    # Connect START → node1 → END
+    builder.add_node("node1", node1)
     builder.add_edge(START, "node1")
     builder.add_edge("node1", END)
+    simple_graph = builder.compile()
 
-    # Compile the graph
-    graph = builder.compile()
-
-    mo.vstack(
-        [
-            mo.md("🎯 Graph compiled successfully!"),
-            mo.md("   Structure: START → node1 → END"),
-        ]
-    )
-    return END, START, StateGraph, graph
+    return (simple_graph,)
 
 
 @app.cell
-def _(mo):
-    mo.md(
-        """
-    ### 📊 Graph Visualization
-
-    Let's visualize our graph structure:
-    """
-    )
-    return
+def _(mo, simple_graph):
+    # Cell 9: Test Simple Graph
+    result1 = simple_graph.invoke({"state_before_node1": "This is node 1! Lucas loves pancakes!"})
+    mo.md(f"**First Graph Result:**\n```python\n{result1}\n```")
 
 
-@app.cell
-def _(display, graph, mo):
-    # Visualization with better error handling
-    try:
-        # First attempt: Try to get SVG which might be more compatible
-        try:
-            graph_svg = graph.get_graph().draw_mermaid_svg()
-            mo.html(graph_svg)
-        except AttributeError:
-            # If SVG not available, try PNG
-            graph_png = graph.get_graph().draw_mermaid_png()
-            mo.image(src=graph_png)
-    except Exception as e:
-        error_message = mo.md(f"**Graph visualization not available**: {e}")
-        display(error_message)
-
-        # Provide a fallback ASCII visualization
-        ascii_viz = mo.md("""
-        ## Graph Structure
-        ```
-        START
-          ↓
-        node1
-          ↓
-         END
-        ```
-        """)
-        display(ascii_viz)
-
-        # Try alternative visualization if available
-        try:
-            # Get the Mermaid code directly if possible
-            mermaid_code = graph.get_graph().get_mermaid()
-            mermaid_viz = mo.md(f"""
-            ## Mermaid Diagram Code
-            ```mermaid
-            {mermaid_code}
-            ```
-            """)
-            display(mermaid_viz)
-        except Exception:
-            pass
     return
 
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-    ### 🚀 Running the Graph
+    # Cell 10: Routing Section Header
+    mo.md("# Routing")
 
-    Now let's execute our graph with some sample data:
-    """
-    )
     return
 
 
 @app.cell
-def _(graph, mo):
-    # Execute the graph
-    input_data = {"state_before_node1": "🎯 Processing LangGraph tutorial data!"}
-
-    print("🏃 Executing graph...")
-    result1 = graph.invoke(input_data)
-
-    mo.md(f"""
-    **Execution Result:**
-
-    ```json
-    {result1}
-    ```
-    """)
-    return
-
-
-@app.cell
-def _(mo):
-    mo.md(
-        """
-    ## 🔀 Advanced: Conditional Routing
-
-    Now let's build a more sophisticated graph with **conditional routing**.
-    This allows your graph to make decisions and follow different paths.
-
-    ![Routing Diagram](./2025-02-10-12-16-57.png)
-    """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    mo.md(
-        """
-    ### 🎯 Routing Logic
-
-    We'll create a graph that routes to different nodes based on user input:
-    - Input "2" → goes to node2
-    - Any other input → goes to node3
-    """
-    )
-    return
-
-
-@app.cell
-def _(Literal):
+def _(END, Literal, START, StateGraph, TypedDict):
+    # Cell 11: Define Routing Components and Build Graph
     def node1_routing(state):
-        """Entry point for routing logic"""
-        print("🚪 Entering routing node...")
-        print(f"   Input: {state.get('graph_state', 'None')}")
+        print("Passing by node 1")
         return state
 
     def node2(state):
-        """Processing path A"""
-        print("🎯 Processing in node 2")
-        state["graph_state"] = "✅ Completed path A (node 2)" 
+        print("Passing by node 2")
+        state["graph_state"] = "node 2" 
         return state
 
     def node3(state):
-        """Processing path B"""
-        print("🎯 Processing in node 3")
-        state["graph_state"] = "✅ Completed path B (node 3)"
+        print("Passing by node 3")
+        state["graph_state"] = "node 3"
         return state
 
     def decision_node(state) -> Literal["node2", "node3"]:
-        """Routing decision logic"""
         user_input = state["graph_state"]
-        print(f"🤔 Making routing decision for input: '{user_input}'")
-
+        print(user_input)
+    
         if user_input == "2":
-            print("   → Routing to node2")
             return "node2"
         else:
-            print("   → Routing to node3")
             return "node3"
 
-    return decision_node, node1_routing, node2, node3
-
-
-@app.cell
-def _(mo):
-    mo.md(
-        """
-    ### 🏗️ Building the Routing Graph
-
-    Now we'll create a graph with conditional edges:
-    """
-    )
-    return
-
-
-@app.cell
-def _(
-    END,
-    START,
-    StateGraph,
-    TypedDict,
-    decision_node,
-    node1_routing,
-    node2,
-    node3,
-):
     class RoutingState(TypedDict):
         graph_state: str
 
-    # Build the routing graph
     routing_builder = StateGraph(RoutingState)
-
-    # Add all nodes
     routing_builder.add_node("node1", node1_routing)
     routing_builder.add_node("node2", node2)
     routing_builder.add_node("node3", node3)
-
-    # Create the flow: START → node1 → [node2 OR node3] → END
     routing_builder.add_edge(START, "node1")
     routing_builder.add_conditional_edges("node1", decision_node)
     routing_builder.add_edge("node2", END)
     routing_builder.add_edge("node3", END)
-
     routing_graph = routing_builder.compile()
 
-    print("🎯 Routing graph compiled successfully!")
-    print("   Structure: START → node1 → [node2 OR node3] → END")
     return (routing_graph,)
 
 
 @app.cell
+def _(base64, mo):
+    # Cell 12: Graph Visualization Function
+    def display_graph_image(graph):
+        """Display the graph visualization in marimo"""
+        try:
+            # Get the mermaid PNG bytes
+            png_bytes = graph.get_graph().draw_mermaid_png()
+        
+            # Convert to base64 for display
+            img_base64 = base64.b64encode(png_bytes).decode()
+        
+            # Create HTML img tag
+            html_content = f'<img src="data:image/png;base64,{img_base64}" alt="Graph Visualization" style="max-width: 100%; height: auto;">'
+        
+            return mo.Html(html_content)
+        except Exception as e:
+            return mo.md(f"**Error displaying graph:** {str(e)}")
+
+    mo.md("# Graph Visualization Function")
+    return (display_graph_image,)
+
+
+@app.cell
 def _(mo):
-    mo.md("""### 📊 Routing Graph Visualization""")
+    # Cell 13: Display Graph Visualization Header
+    mo.md("# **Graph Visualization:**")
+
+    return
+
+
+@app.cell
+def _(display_graph_image, routing_graph):
+    # Cell 14: Show Graph Image
+    display_graph_image(routing_graph)
+
     return
 
 
 @app.cell
 def _(mo, routing_graph):
-    try:
-        routing_graph_png = routing_graph.get_graph().draw_mermaid_png()
-        mo.image(src=routing_graph_png)
-    except Exception as e:
-        mo.md(f"**Routing graph visualization not available**: {e}")
-        mo.md(
-            """
-            ```
-            START → node1 → decision
-                          ├─ "2" → node2 → END
-                          └─ else → node3 → END
-            ```
-            """
-        )
-    return
-
-
-@app.cell
-def _(mo):
-    mo.md(
-        """
-    ### 🧪 Testing Routing Paths
-
-    Let's test both routing paths:
-    """
-    )
-    return
-
-
-@app.cell
-def _(mo, routing_graph):
-    # Test path to node2
-    print("🧪 Testing route to node2 (input='2'):")
+    # Cell 15: Test Routing Path 1
     result2 = routing_graph.invoke({"graph_state": "2"})
+    mo.md(f"**Routing Graph Result (input '2'):**\n```python\n{result2}\n```")
 
-    mo.md(f"""
-    **Route to Node2 (input="2"):**
-
-    ```json
-    {result2}
-    ```
-    """)
     return
 
 
 @app.cell
 def _(mo, routing_graph):
-    # Test path to node3
-    print("🧪 Testing route to node3 (input='other'):")
-    result3 = routing_graph.invoke({"graph_state": "anything_else"})
+    # Cell 16: Test Routing Path 2
+    result3 = routing_graph.invoke({"graph_state": "3"})
+    mo.md(f"**Routing Graph Result (input '3'):**\n```python\n{result3}\n```")
 
-    mo.md(f"""
-    **Route to Node3 (input="anything_else"):**
-
-    ```json
-    {result3}
-    ```
-    """)
     return
 
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-    ## 🎉 Congratulations!
+    # Cell 17: Summary
+    mo.vstack([
+        mo.md("# Summary"),
+        mo.md("## This marimo notebook demonstrates:"),
+        mo.md("1. **Simple State Management**: Basic state updates through graph execution"),
+        mo.md("2. **Conditional Routing**: Dynamic path selection based on input values"),
+        mo.md("3. **Graph Visualization**: Visual representation of the graph structure using mermaid diagrams"),
+        mo.md("## The key differences from Jupyter:"),
+        mo.md("- Uses `mo.md()` for markdown content"),
+        mo.md("- Replaces `IPython.display.Image` with base64 encoded HTML images"),
+        mo.md("- Maintains all LangGraph functionality while being marimo-compatible")
+    ])
 
-    You've successfully learned the fundamentals of LangGraph:
+    return
 
-    ✅ **States** - Typed data structures for workflow memory  
-    ✅ **Nodes** - Processing functions that transform state  
-    ✅ **Edges** - Connections between nodes (direct and conditional)  
-    ✅ **Graphs** - Complete workflows that orchestrate everything  
 
-    ### 🚀 Next Steps
+@app.cell
+def _(mo):
+    # Cell 18: Reactive Dependencies Diagram
+    mo.vstack([
+        mo.md("## Reactive Dependencies Diagram:"),
+        mo.md(" "),
+        mo.mermaid("""
+    graph TD
+        C1["Cell 1<br/>📦 Imports & Setup"] --> C2["Cell 2<br/>🔑 Environment"]
+        C1 --> C6["Cell 6<br/>📝 State Header"]
+        C1 --> C7["Cell 7<br/>🏗️ State Class"]
+        C1 --> C8["Cell 8<br/>🔨 Simple Graph"]
+        C1 --> C11["Cell 11<br/>🔀 Routing System"]
+        C1 --> C12["Cell 12<br/>🖼️ Visualization Function"]
+    
+        C7 --> C8
+        C8 --> C9["Cell 9<br/>▶️ Simple Execution"]
+    
+        C11 --> C12
+        C11 --> C14["Cell 14<br/>📊 Graph Display"]
+        C11 --> C15["Cell 15<br/>🎯 Test Path 1"]
+        C11 --> C16["Cell 16<br/>🎯 Test Path 2"]
+    
+        C12 --> C14
+    
+        %% Independent cells
+        C3["Cell 3<br/>📋 Title"]
+        C4["Cell 4<br/>📖 Concepts"]
+        C5["Cell 5<br/>⚙️ Setup Instructions"]
+        C10["Cell 10<br/>🔀 Routing Header"]
+        C13["Cell 13<br/>📊 Viz Header"]
+        C17["Cell 17<br/>📄 Summary"]
+    
+        %% Dark theme friendly styling
+        classDef primary fill:#1e3a8a,stroke:#3b82f6,stroke-width:3px,color:#ffffff
+        classDef secondary fill:#581c87,stroke:#a855f7,stroke-width:2px,color:#ffffff
+        classDef independent fill:#166534,stroke:#22c55e,stroke-width:1px,color:#ffffff
+        classDef execution fill:#ea580c,stroke:#f97316,stroke-width:2px,color:#ffffff
+    
+        class C1,C7,C8,C11 primary
+        class C2,C12 secondary
+        class C3,C4,C5,C6,C10,C13,C17 independent
+        class C9,C14,C15,C16 execution
+        """),
+        mo.md(" "),
+        mo.md("### Legend:"),
+        mo.md("- **🔵 Primary Cells**: Core functionality (imports, state, graph building)"),
+        mo.md("- **🟣 Secondary Cells**: Supporting functions (environment, visualization)"),
+        mo.md("- **🟢 Independent Cells**: Standalone markdown content"),
+        mo.md("- **🟠 Execution Cells**: Graph execution and display")
+    ])
+    return
 
-    - Explore more complex state structures
-    - Add error handling and validation
-    - Integrate with LLMs for AI-powered workflows
-    - Build multi-agent systems
 
-    **Happy graphing!** 🎯
-    """
-    )
+@app.cell
+def _(mo):
+
+    mo.vstack([
+        mo.md("# **Define Graph Visualization Function**"),
+        mo.md(" "),
+        mo.md("## **🎯 Key Learning Points:**"),
+        mo.md(" "),
+        mo.md("1. Same Data Source: Both get PNG bytes from draw_mermaid_png()"),
+        mo.md("2. Different Rendering: Jupyter uses kernel magic, Marimo uses web standards"),
+        mo.md("3. Reactivity: Jupyter displays once, Marimo creates reactive HTML objects"),
+        mo.md("4. Error Handling: Marimo allows custom error messages and troubleshooting"),
+        mo.md("5. Styling Control: Marimo gives full HTML/CSS control"),
+        mo.md(" "),
+        mo.md("## **🚀 Why This Matters:**"),
+        mo.md("- **Understanding**: Shows exactly what Jupyter abstracts away"),
+        mo.md("- **Debugging**: When images don't show, you know where to look"),
+        mo.md("- **Customization**: Full control over styling and behavior"),
+        mo.md("- **Portability**: Same pattern works for any binary data visualization"),
+        mo.md("- **This conversion pattern can be applied to any Jupyter display object - matplotlib plots, PIL images, SVGs, etc.! 🎨**")
+    ])
     return
 
 
