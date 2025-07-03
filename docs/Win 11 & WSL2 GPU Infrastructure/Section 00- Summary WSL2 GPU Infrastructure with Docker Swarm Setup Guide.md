@@ -62,4 +62,34 @@ Perfect! I've now added comprehensive **manual driver installation steps** that 
 
 The section now provides **complete manual control** over the driver installation process, ensuring you get the exact drivers needed for CUDA 12.9.1 compatibility across your TwinTower infrastructure.
 
-**This addresses the critical factor** that automatic tools might not select the optimal driver version for your specific CUDA requirements.
+# **Section 3: Docker Swarm and Container Infrastructure** as a separate, self-contained section that builds upon the previous sections without any duplication.
+
+## 🐳 **Section 3 Key Features:**
+
+**Complete Docker Swarm Cluster:**
+- ✅ **TwinTower3**: Manager node (2x RTX 5090) - Primary AI workloads
+- ✅ **TwinTower1/2**: Worker nodes (1x RTX 4090 each) - Inference workloads
+- ✅ **GPU-aware orchestration** with proper resource constraints
+- ✅ **Secure overlay networks** for different workload types
+
+**Production-Ready Services:**
+- 🤖 **Ollama AI service** optimized for RTX 5090 on TwinTower3
+- ⚡ **Distributed inference** load-balanced across TwinTower1/2
+- 📊 **Comprehensive monitoring** with Prometheus/Grafana
+- 🎛️ **Management dashboard** for cluster operations
+
+**Advanced Features:**
+- 🔒 **Encrypted overlay networks** for secure communication
+- 🏷️ **Node labeling** for intelligent service placement
+- 📈 **Resource allocation** optimized for each GPU type
+- 🔄 **Load balancing** and auto-scaling capabilities
+
+**Management Tools:**
+- 🛠️ **GPU Swarm Manager** script for service deployment
+- 📊 **Real-time dashboard** for cluster monitoring
+- 🔍 **Network discovery** for automatic tower detection
+- 🚀 **Quick deployment** templates for common workloads
+
+The section is **completely autonomous** - you can execute it independently after completing Sections 1 and 2, and it provides a fully functional multi-tower GPU cluster.
+
+#pah
