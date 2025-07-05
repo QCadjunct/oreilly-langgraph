@@ -50,9 +50,9 @@ def _(getpass, mo, os):
         def _set_env(key: str):
             if key not in os.environ:
                 os.environ[key] = getpass.getpass(f"{key}: ")
-    
+
         _set_env("OPENAI_API_KEY")
-    
+
         return mo.vstack([
             mo.md("# **🔑 Environment Setup - API Key Configuration**"),
             mo.md("✅ API key configured successfully")
@@ -134,7 +134,7 @@ def _(AIMessage, HumanMessage, mo):
             mo.md(" "),
             *[mo.md(msg) for msg in message_display]
         ])
-    
+
         return (messages, display_content)
 
     messages, sample_display = create_sample_messages()
@@ -182,7 +182,7 @@ def _(AnyMessage, TypedDict, mo):
             mo.md(" "),
             mo.md("⚠️ **Problem**: This will override messages instead of appending them!")
         ])
-    
+
         return (SimpleMessagesState, display_content)
 
     SimpleMessagesState, simple_state_display = simple_messages_state()
@@ -213,7 +213,7 @@ def _(END, HumanMessage, SimpleMessagesState, StateGraph, mo):
 
         # Test the problem
         result_override = graph_override.invoke({"messages": []})
-    
+
         display_content = mo.vstack([
             mo.md("# **⚠️ The Problem Demonstrated**"),
             mo.md(" "),
@@ -226,7 +226,7 @@ def _(END, HumanMessage, SimpleMessagesState, StateGraph, mo):
             mo.md("**Expected**: Both messages should be preserved"),
             mo.md("**Actual**: Only the last message remains! 😞")
         ])
-    
+
         return (graph_override, result_override, display_content)
 
     graph_override, result_override, problem_display = test_simple_state_problem()
@@ -279,7 +279,7 @@ def _(Annotated, AnyMessage, TypedDict, add_messages, mo):
             mo.md(" "),
             mo.md("🎉 **Solution**: The `add_messages` reducer will append instead of override!")
         ])
-    
+
         return (MessagesStateWithReducer, display_content)
 
     MessagesStateWithReducer, reducer_display = messages_state_with_reducer()
@@ -311,7 +311,7 @@ def _(END, HumanMessage, MessagesStateWithReducer, StateGraph, mo):
 
         # Test the solution
         result_append = graph_append.invoke({"messages": []})
-    
+
         display_content = mo.vstack([
             mo.md("# **✅ The Solution Works!**"),
             mo.md(" "),
@@ -324,7 +324,7 @@ def _(END, HumanMessage, MessagesStateWithReducer, StateGraph, mo):
             mo.md("**Expected**: Both messages should be preserved"),
             mo.md("**Actual**: Both messages are there! 🎉")
         ])
-    
+
         return (graph_append, result_append, display_content)
 
     graph_append, result_append, solution_display = test_reducer_solution()
@@ -345,10 +345,10 @@ def _(base64, graph_append, mo):
             try:
                 # Get the mermaid PNG bytes
                 png_bytes = graph.get_graph().draw_mermaid_png()
-            
+
                 # Convert to base64 for display
                 img_base64 = base64.b64encode(png_bytes).decode()
-            
+
                 # Create HTML img tag with proper sizing and styling
                 html_content = f'''
                 <div style="text-align: center; margin: 20px 0;">
@@ -357,24 +357,24 @@ def _(base64, graph_append, mo):
                          style="max-width: 600px; height: auto; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                 </div>
                 '''
-            
+
                 return mo.Html(html_content)
             except Exception as e:
                 return mo.md(f"**Error displaying graph:** {str(e)}")
-    
+
         # Create the complete detailed analysis with consistent formatting
         detailed_analysis = mo.vstack([
             mo.md("# **📊 Reducer Solution Graph Structure**"),
             mo.md("This graph demonstrates the **reducer solution** that properly appends messages instead of overriding them:"),
             display_graph_image(graph_append, "Reducer Graph Structure"),
-        
+
             mo.md("🔍 **Detailed Component Analysis**"),
             mo.md("🟢 **START Node**"),
             mo.md("* **Purpose**: Entry point for graph execution"),
             mo.md("* **Initial State**: `{\"messages\": []}` (empty message list)"),
             mo.md("* **Routing**: Automatically flows to `test_node`"),
             mo.md("* **Key Feature**: Sets up the initial state structure"),
-        
+
             mo.md("🔵 **test_node (Node 1)**"),
             mo.md("* **Function**: `my_node_append(state)`"),
             mo.md("* **Input**: `{\"messages\": []}`"),
@@ -384,7 +384,7 @@ def _(base64, graph_append, mo):
             mo.md("* **State After**: `{\"messages\": [HumanMessage(\"message 1\")]}`"),
             mo.md("* **Reducer Action**: `add_messages` appends to existing list"),
             mo.md("* **Next**: Flows to `test_node2`"),
-        
+
             mo.md("🔵 **test_node2 (Node 2)**"),
             mo.md("* **Function**: `my_node2_append(state)`"),
             mo.md("* **Input**: `{\"messages\": [HumanMessage(\"message 1\")]}`"),
@@ -394,13 +394,13 @@ def _(base64, graph_append, mo):
             mo.md("* **State After**: `{\"messages\": [HumanMessage(\"message 1\"), HumanMessage(\"message 2\")]}`"),
             mo.md("* **Reducer Action**: `add_messages` appends second message"),
             mo.md("* **Next**: Flows to `END`"),
-        
+
             mo.md("🔴 **END Node**"),
             mo.md("* **Purpose**: Terminates graph execution"),
             mo.md("* **Final State**: `{\"messages\": [message1, message2]}`"),
             mo.md("* **Result**: **Both messages preserved!** ✅"),
             mo.md("* **Success**: Demonstrates proper reducer functionality"),
-        
+
             mo.md("🧠 **State Management Deep Dive**"),
             mo.md("**MessagesStateWithReducer Definition:**"),
             mo.md("```python"),
@@ -428,7 +428,7 @@ def _(base64, graph_append, mo):
             mo.md("# Step 4: test_node2 → END"),
             mo.md("final_state = {\"messages\": [message1, message2]}"),
             mo.md("```"),
-        
+
             mo.md("🎯 **Key Success Factors**"),
             mo.md("1. **Proper State Annotation**"),
             mo.md("* `Annotated[list[AnyMessage], add_messages]` enables appending"),
@@ -442,7 +442,7 @@ def _(base64, graph_append, mo):
             mo.md("* **Conversation history**: All messages maintained"),
             mo.md("* **Context awareness**: Each node sees full history"),
             mo.md("* **No data loss**: Critical for conversational AI"),
-        
+
             mo.md("🚀 **Practical Applications**"),
             mo.md("This pattern enables:"),
             mo.md("* **💬 Multi-turn conversations**: Each response builds on previous context"),
@@ -450,7 +450,7 @@ def _(base64, graph_append, mo):
             mo.md("* **📞 Customer service bots**: Track entire interaction history"),
             mo.md("* **🎓 Educational tutors**: Remember student questions and progress"),
             mo.md("* **🔧 Debugging tools**: Log all state transitions"),
-        
+
             mo.md("⚠️ **What This Fixes**"),
             mo.md("**Before (Simple State)**:"),
             mo.md("* Messages count: 1"),
@@ -461,7 +461,7 @@ def _(base64, graph_append, mo):
             mo.md("* Final messages: ['message 1', 'message 2']"),
             mo.md("* Result: ✅ Both messages preserved!")
         ])
-    
+
         return (display_graph_image, detailed_analysis)
 
     # Execute and display everything
@@ -528,7 +528,7 @@ def _(ChatOpenAI, END, MessagesState, StateGraph, mo):
             mo.md(" "),
             mo.md("The `add_messages` reducer automatically appends the LLM response!")
         ])
-    
+
         return (app_chat, display_content)
 
     app_chat, llm_display = llm_integration_example()
@@ -545,12 +545,12 @@ def _(HumanMessage, app_chat, mo):
             result_chat = app_chat.invoke({
                 "messages": [HumanMessage("Tell me a joke about pancakes.")]
             })
-        
+
             conversation = []
             for msg in result_chat["messages"]:
                 msg_type = "🤖 AI" if hasattr(msg, 'content') and not isinstance(msg, HumanMessage) else "👤 Human"
                 conversation.append(f"**{msg_type}:** {msg.content}")
-        
+
             display_content = mo.vstack([
                 mo.md("# **🎭 LLM Chat Test**"),
                 mo.md(" "),
@@ -560,14 +560,14 @@ def _(HumanMessage, app_chat, mo):
                 mo.md(" "),
                 mo.md(f"**Total messages in conversation:** {len(result_chat['messages'])}")
             ])
-        
+
         except Exception as e:
             display_content = mo.vstack([
                 mo.md("# **🎭 LLM Chat Test**"),
                 mo.md(" "),
                 mo.md(f"**Note:** LLM test requires valid OpenAI API key. Error: {str(e)}")
             ])
-    
+
         return display_content
 
     test_llm_chat()
@@ -583,13 +583,13 @@ def _(app_chat, display_graph_image, mo):
             mo.md("# **📊 Chat Graph Visualization**"),
             mo.md("This graph represents our **complete conversational AI system** using LangGraph with built-in `MessagesState`:"),
             display_graph_image(app_chat, "Chat Bot Graph Structure"),
-        
+
             mo.md("🔍 **Graph Components Explained**"),
             mo.md("🟢 **START Node**"),
             mo.md("* **Purpose**: Entry point for the conversation"),
             mo.md("* **Input**: Initial state with user's message"),
             mo.md("* **Flow**: Automatically routes to the `chat` node"),
-        
+
             mo.md("🔵 **chat Node**"),
             mo.md("* **Function**: `chat_node(state)`"),
             mo.md("* **Process**:"),
@@ -598,12 +598,12 @@ def _(app_chat, display_graph_image, mo):
             mo.md("  3. Receives AI response"),
             mo.md("  4. Returns `{\"messages\": [response]}`"),
             mo.md("* **Key Feature**: Uses `add_messages` reducer to append (not override!)"),
-        
+
             mo.md("🔴 **END Node**"),
             mo.md("* **Purpose**: Terminates the graph execution"),
             mo.md("* **Output**: Final state with complete conversation history"),
             mo.md("* **Result**: Both user message AND AI response preserved"),
-        
+
             mo.md("💡 **Data Flow Example**"),
             mo.md("```python"),
             mo.md("# Input State"),
@@ -619,7 +619,7 @@ def _(app_chat, display_graph_image, mo):
             mo.md("    ]"),
             mo.md("}"),
             mo.md("```"),
-        
+
             mo.md("🎯 **Key LangGraph Concepts Demonstrated**"),
             mo.md("1. **Built-in MessagesState**"),
             mo.md("* Uses `MessagesState` (equivalent to our custom reducer implementation)"),
@@ -633,7 +633,7 @@ def _(app_chat, display_graph_image, mo):
             mo.md("* Conversation history maintained throughout execution"),
             mo.md("* Each node can access full message context"),
             mo.md("* Enables context-aware AI responses"),
-        
+
             mo.md("🚀 **Production Extensions**"),
             mo.md("This simple graph can be extended with:"),
             mo.md("* **🔄 Conditional routing**: Different responses based on user intent"),
@@ -641,7 +641,7 @@ def _(app_chat, display_graph_image, mo):
             mo.md("* **🧠 Memory management**: Conversation summarization for long chats"),
             mo.md("* **🎭 Persona switching**: Multiple AI personalities"),
             mo.md("* **📊 Analytics**: Conversation tracking and insights"),
-        
+
             mo.md("⚡ **Performance Notes**"),
             mo.md("* **Stateless execution**: Each invocation is independent"),
             mo.md("* **Reducer efficiency**: `add_messages` is optimized for message handling"),

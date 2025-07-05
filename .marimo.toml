@@ -1,63 +1,60 @@
+[package_management]
+manager = "uv"
+
 [ai]
-# Primary coding model - excellent for LangGraph/LangChain development (Ollama)
-open_ai = { 
-  api_key = "", 
-  base_url = "http://localhost:11434/v1", 
-  model = "qwen2.5-coder:14b" 
-}
+rules = ""
+mode = "manual"
 
-# Optional API Providers (uncomment and add your API keys):
+[server]
+follow_symlink = false
+browser = "default"
 
-# OpenAI
-# open_ai = { api_key = "sk-your-openai-api-key-here", model = "gpt-4o" }
+[snippets]
+include_default_snippets = true
+custom_paths = []
 
-# Anthropic Claude 4 Sonnet (recommended)
-# anthropic = { api_key = "sk-ant-your-anthropic-api-key-here", model = "claude-4-sonnet-20250514" }
+[runtime]
+default_sql_output = "auto"
+on_cell_change = "autorun"
+std_stream_max_bytes = 1000000
+output_max_bytes = 8000000
+reactive_tests = true
+auto_reload = "off"
+watcher_on_save = "lazy"
+auto_instantiate = true
 
-# Anthropic Claude 4 Opus (most powerful)
-# anthropic = { api_key = "sk-ant-your-anthropic-api-key-here", model = "claude-4-opus-20250514" }
+[save]
+autosave = "after_delay"
+autosave_delay = 1000
+format_on_save = false
 
-# Anthropic Claude 3.5 Sonnet
-# anthropic = { api_key = "sk-ant-your-anthropic-api-key-here", model = "claude-3-5-sonnet-20241022" }
+[completion]
+copilot = false
+activate_on_typing = true
 
-# Anthropic Claude 3.5 Haiku (fastest)
-# anthropic = { api_key = "sk-ant-your-anthropic-api-key-here", model = "claude-3-5-haiku-20241022" }
+[keymap]
+preset = "default"
 
-# Google AI Gemini
-# google = { api_key = "your-google-ai-api-key-here", model = "gemini-1.5-pro" }
+[keymap.overrides]
 
-# Mistral AI (Le Chat)
-# open_ai = { api_key = "your-mistral-api-key-here", base_url = "https://api.mistral.ai/v1", model = "mistral-large-latest" }
+[experimental]
 
-# Custom rules for LangGraph development
-rules = [
-  "Always use proper type hints with langchain and langgraph imports",
-  "Include docstrings for graph nodes and edges",
-  "Use async/await patterns for LangChain operations when appropriate",
-  "Follow LangGraph best practices for state management",
-  "Import from specific langchain modules rather than general imports",
-  "Add error handling for LLM API calls",
-  "Use descriptive variable names for graph states and nodes",
-  "Use TypedDict for LangGraph state schemas",
-  "Implement proper error handling in graph nodes",
-  "Add logging for graph execution steps",
-  "Use langchain_core.messages for message handling",
-  "Follow the invoke/ainvoke pattern for async operations",
-  "Structure LangGraph workflows with clear node functions",
-  "Use proper imports: from langgraph.graph import StateGraph",
-  "Add type annotations for all function parameters and returns"
-]
+[display]
+code_editor_font_size = 14
+cell_output = "above"
+dataframes = "rich"
+theme = "light"
+default_table_page_size = 10
+default_width = "medium"
 
-# Enable all AI features
-completion = { enabled = true }
-chat = { enabled = true }
+[formatting]
+line_length = 79
 
-# Alternative models (uncomment to switch)
-# For faster responses during development:
-# open_ai = { api_key = "", base_url = "http://localhost:11434/v1", model = "qwen2.5-coder:7b" }
-
-# For complex reasoning tasks:
-# open_ai = { api_key = "", base_url = "http://localhost:11434/v1", model = "deepseek-r1:14b" }
-
-# For vision-related LangGraph workflows:
-# open_ai = { api_key = "", base_url = "http://localhost:11434/v1", model = "qwen2.5vl:7b" }
+[language_servers.pylsp]
+enable_ruff = true
+enable_pylint = false
+enable_pyflakes = false
+enable_pydocstyle = false
+enable_flake8 = false
+enable_mypy = true
+enabled = true
